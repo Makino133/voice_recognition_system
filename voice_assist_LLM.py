@@ -9,6 +9,7 @@ import rclpy
 import requests
 import time
 import numpy as np
+import pyttsx3
 from rclpy.node import Node
 from rclpy.parameter import Parameter as RclpyParameter
 from rcl_interfaces.msg import Parameter as MsgParameter, ParameterType, ParameterValue
@@ -36,10 +37,14 @@ MODEL_PATH ="/home/orin/voice_recognition_system/vosk-model-lm/vosk-model-en-us-
 model = Model(MODEL_PATH)
 
 #API key and URL
-API_KEY = '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'
-#API_KEY = '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'
-#API_KEY = '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'
+#API_KEY = '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'
+API_KEY = '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'
 API_URL = 'https://openrouter.ai/api/v1/chat/completions'
+
+#pyttsx3 srttings
+engine = pyttsx3.init()
+engine.setProperty("rate", 150)
+engine.setProperty("volume", 1.0)
 
 # Define the headers for the API request
 headers = {
@@ -204,7 +209,7 @@ class VoiceRecognition:
                     text = result.get("text", "").strip().lower()
                     #print("time2:",time_diff)
                     #text = "assistant"
-                    #text = input("test sentence: ")
+                    text = input("test sentence: ")
                     print(f"audio recording: {text}")
                     if text:
                         print(f"(Detected: {text})")
@@ -227,6 +232,8 @@ class VoiceRecognition:
     def voice_feedback(self, text):
         if text == "assistant":
             print("Hello, How can I help you.")
+            engine.say("Hello, How can I help you.")
+            engine.runAndWait()
         else:
             print("Listening...")
             partial_result = json.loads(rec.PartialResult())
@@ -283,6 +290,8 @@ class VoiceRecognition:
         #print(result)
         output = result['choices'][0]['message']['content']
         print("Assistant:", output)
+        engine.say(output)
+        engine.runAndWait()
         return output
 
     def process_command(self, output):
