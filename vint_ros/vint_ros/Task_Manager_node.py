@@ -29,7 +29,7 @@ from std_msgs.msg import String
 from std_msgs.msg import Empty
 from std_msgs.msg import Int32
 
-API_KEY = "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"
+API_KEY ="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"
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 engine = pyttsx3.init()
@@ -141,14 +141,14 @@ class TaskManager(Node):
         out_LLM = self.LLM(command_text)
         """
 
-        if any("Near edge" in e for e in self.edges):
+        if any("Near Edge" in e for e in self.edges):
             self.case = "case1"
             out_LLM = "OK, I will take you Right edge"
-            #out_LLM = self.LLM_edge_case1(command_text)
-        elif any("Near right edge" in e for e in self.edges):
+            out_LLM = self.LLM_edge_case1(command_text)
+        elif any("Near Right Edge" in e for e in self.edges):
             self.case = "case2"
             out_LLM = "OK, I will take you Near Right edge"
-            #out_LLM = self.LLM_edge_case2(command_text)
+            out_LLM = self.LLM_edge_case2(command_text)
         
         self.get_logger().info(f"LLM output: {out_LLM}")
         trigger = Empty()
@@ -235,8 +235,9 @@ class TaskManager(Node):
         response = requests.post(API_URL, json=data, headers=headers)
         print(response)
         result = response.json()
+        print(result)
         output = result["choices"][0]["message"]["content"]
-        print("Assistant:", output)
+        #print("Assistant:", output)
         return output
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
