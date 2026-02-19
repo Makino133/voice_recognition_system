@@ -27,7 +27,7 @@ from std_msgs.msg import String
 from std_msgs.msg import Empty
 from std_msgs.msg import Int32
 
-API_KEY = "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"
+API_KEY = "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"
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 engine = pyttsx3.init()
