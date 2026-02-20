@@ -29,7 +29,7 @@ from std_msgs.msg import String
 from std_msgs.msg import Empty
 from std_msgs.msg import Int32
 
-API_KEY = "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"
+API_KEY = "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"
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
 engine = pyttsx3.init()
@@ -106,7 +106,8 @@ class TaskManager(Node):
             self.on_command_update(text)
             return
         # changed => process
-        if text != self.cmd_last:
+        #if text != self.cmd_last:
+        else:
             self.cmd_last = text
             self.on_command_update(text)
 
@@ -144,11 +145,11 @@ class TaskManager(Node):
         if any("Near edge" in e for e in self.edges):
             self.case = "case1"
             out_LLM = "OK, I will take you Right edge"
-            #out_LLM = self.LLM_edge_case1(command_text)
-        elif any("Near right edge" in e for e in self.edges):
+            out_LLM = self.LLM_edge_case1(command_text)
+        elif any("Near Right edge" in e for e in self.edges):
             self.case = "case2"
             out_LLM = "OK, I will take you Near Right edge"
-            #out_LLM = self.LLM_edge_case2(command_text)
+            out_LLM = self.LLM_edge_case2(command_text)
         
         self.get_logger().info(f"LLM output: {out_LLM}")
         trigger = Empty()
