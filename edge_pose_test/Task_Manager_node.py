@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import sys
 import os
 import json
@@ -33,7 +35,7 @@ import re
 API_KEY = "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"
 API_URL = "https://openrouter.ai/api/v1/chat/completions"
 
-client = genai.Client(api_key="AIzaSyDF0_8iOCkmTCQKHQDzgUeMOIBt1pPO3zs")
+client = genai.Client(api_key="AIzaSyAIZy2K0ETUiJ2886-Gup2mcHGDX1phS1A")
 
 engine = pyttsx3.init()
 engine.setProperty("rate", 150)
@@ -122,7 +124,7 @@ class TaskManager(Node):
         self.edges = {}
 
         if len(edges_nm_ps) != 4:
-            self.get_logger().warn(f"Unexpected /edge_list format: {edges}")
+            self.get_logger().warn(f"Unexpected /edge_list format: {edges_nm_ps}")
             return
         
         for edge_nm_ps in edges_nm_ps:
@@ -145,6 +147,7 @@ class TaskManager(Node):
         self.get_logger().info(f"Command updated: {command_text}")
         out_LLM = self.LLM(command_text)
         """
+        self.get_logger().info(f"received command {command_text}")
         e_names= list(self.edges.keys())
 
         if any("Near edge" in e for e in e_names):
@@ -160,9 +163,17 @@ class TaskManager(Node):
 
         self.result_edge(out_LLM)
 
-        self.create_arrow_marker("selected pose", "map")
+
+
+        
 
         self.get_logger().info(f"LLM output: {out_LLM}")
+
+        if self.out_edge is None:
+            self.get_logger().warn("No edge was detected")
+        else:
+            self.create_arrow_marker("selected pose", "map")
+
         trigger = Empty()
         out_LLM_msg = String()
         out_LLM_msg.data = out_LLM
@@ -431,27 +442,7 @@ class TaskManager(Node):
             self.get_logger().info("(No matching edge found in LLM output)")
         else:
             self.get_logger().info(f"(Matching Edge: {self.out_edge}: {self.out_edge_pose})")
-    
-    #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    def edge_list_split(self, edge_list):
-        edges = []
 
-        for line in edge_list.splitlines():
-            if not line.strip():
-                continue
-
-            # ":" の右側を取得
-            right_part = line.split(":", 1)[1]
-
-            # "/" で分割
-            parts = [p.strip() for p in right_part.split("/")]
-
-            # 最後は座標なので除外
-            labels = parts[:-1]
-
-            edges.append(labels)
-
-        return edges
 
 #~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -504,7 +495,6 @@ class TaskManager(Node):
         qw = math.cos(yaw / 2.0)
         q=[qx,qy,qz,qw]
         return q
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 def main():
     rclpy.init()
